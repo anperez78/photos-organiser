@@ -1,0 +1,6 @@
+App.iml
+.idea/
+.java-version
+target/
+frontend/build/
+frontend/node_modules/
