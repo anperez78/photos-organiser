@@ -1,13 +1,24 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Viewer from 'react-viewer';
+import 'react-viewer/dist/index.css';
 
 class App extends Component {
+
+    constructor() {
+        super();
+
+        this.state = {
+            visible: false,
+        };
+    }
 
   state = {};
 
   componentDidMount() {
-      setInterval(this.hello, 250);
+      //setInterval(this.hello, 250);
+      this.hello;
   }
 
   hello = () => {
@@ -26,8 +37,17 @@ class App extends Component {
           <h1 className="App-title">{this.state.message}</h1>
         </header>
         <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
+          This is a test.
         </p>
+        <img src="api/picture/123"/>
+        <div>
+            <button onClick={() => { this.setState({ visible: !this.state.visible }); } }>show</button>
+            <Viewer
+                visible={this.state.visible}
+                onClose={() => { this.setState({ visible: false }); } }
+                images={[{src: 'api/picture/123', alt: 'alsdf'} ]}
+            />
+        </div>
       </div>
     );
   }

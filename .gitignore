@@ -4,3 +4,4 @@ App.iml
 target/
 frontend/build/
 frontend/node_modules/
+.DS_Store
