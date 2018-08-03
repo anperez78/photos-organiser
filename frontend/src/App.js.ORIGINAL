@@ -1,0 +1,102 @@
+import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
+import Viewer from 'react-viewer';
+import 'react-viewer/dist/index.css';
+import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+
+const styles = {
+    card: {
+        maxWidth: 345,
+    },
+    media: {
+        height: 0,
+        paddingTop: '56.25%', // 16:9
+    },
+};
+
+
+class App extends Component {
+
+    constructor() {
+        super();
+
+        this.state = {
+            visible: false,
+        };
+    }
+
+  state = {};
+
+  componentDidMount() {
+      //setInterval(this.hello, 250);
+      this.hello;
+  }
+
+  hello = () => {
+      fetch('/api/hello')
+          .then(response => response.text())
+          .then(message => {
+              this.setState({message: message});
+          });
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1 className="App-title">{this.state.message}</h1>
+        </header>
+        <p className="App-intro">
+          This is a test.
+        </p>
+        <div>
+            <button onClick={() => { this.setState({ visible: !this.state.visible }); } }>show</button>
+            <Viewer
+                visible={this.state.visible}
+                onClose={() => { this.setState({ visible: false }); } }
+                images={[{src: 'api/picture/123', alt: 'alsdf'} ]}
+            />
+        </div>
+
+
+        <Button variant="contained" color="primary">
+            Hello World
+        </Button>
+
+        <div>
+            <Card>
+                <CardMedia image="api/photo/EF9546DE14CFD2FE6D460912D23E0739" title="Contemplative Reptile"/>
+                <CardContent>
+                    <Typography gutterBottom variant="headline" component="h2">
+                        Lizard
+                    </Typography>
+                    <Typography component="p">
+                        Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica
+                    </Typography>
+                </CardContent>
+                <CardActions>
+                    <Button size="small" color="primary">
+                        Share
+                    </Button>
+                    <Button size="small" color="primary">
+                        Learn More
+                    </Button>
+                </CardActions>
+            </Card>
+        </div>
+
+      </div>
+    );
+  }
+}
+
+export default withStyles(styles)(App);
+//export default App;

@@ -2,20 +2,26 @@ package anperez78.photosOrganiser.service;
 
 import anperez78.photosOrganiser.domain.ImportPhotosResults;
 import anperez78.photosOrganiser.domain.Photo;
+import anperez78.photosOrganiser.dto.PhotoDto;
 import anperez78.photosOrganiser.repository.PhotoRepository;
 import anperez78.photosOrganiser.util.ImagesUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ImportPhotosService {
+public class PhotoService {
+
+    @Value("${photos.url.base}")
+    private String photosUrlBase;
 
     @Autowired
     private ImagesUtils imagesUtils;
@@ -54,9 +60,16 @@ public class ImportPhotosService {
                 }
             }
         }
-        
+
         return importPhotosResults;
     }
 
+    public List<PhotoDto> getAllPhotoDtos() {
+
+        return photoRepository.findAll()
+                .stream()
+                .map(photo -> new PhotoDto(photosUrlBase + photo.getMd5HashHex()))
+                .collect(Collectors.toList());
+    }
 
 }

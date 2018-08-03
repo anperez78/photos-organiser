@@ -1,11 +1,16 @@
 package anperez78.photosOrganiser.controller;
 
+import anperez78.photosOrganiser.domain.Photo;
+import anperez78.photosOrganiser.dto.PhotoDto;
+import anperez78.photosOrganiser.repository.PhotoRepository;
+import anperez78.photosOrganiser.service.PhotoService;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,27 +20,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Slf4j
 public class DonwloadPhotoController {
 
-    @RequestMapping("/api/picture/{id}")
+    @Autowired
+    PhotoService photoService;
+
+    @Autowired
+    PhotoRepository photoRepository;
+
+    @GetMapping("/api/photo/all")
+    public List<PhotoDto> getAllPhotos() {
+
+        return photoService.getAllPhotoDtos();
+    }
+
+    @RequestMapping("/api/photo/{md5}")
     @ResponseBody
-    public HttpEntity<byte[]> getArticleImage(@PathVariable String id) throws IOException {
+    public HttpEntity<byte[]> getPhotoBinary(@PathVariable String md5) throws Exception {
 
-        log.info("Requested picture >> " + id + " <<");
+        log.info("Requested picture >> " + md5 + " <<");
 
-        Path path = Paths.get("/Users/antonio.perez/personal/photos-organiser/frontend/public/images/test01.jpeg");
+        Optional<Photo> photo = photoRepository.findById(md5);
+        if (!photo.isPresent()) {
+            throw new Exception("Image not found");
+        }
+
+        String photoFullPath = photo.get().getPhotoFilepath() + "/" + photo.get().getPhotoFilename();
+        Path path = Paths.get(photoFullPath);
         byte[] data = Files.readAllBytes(path);
 
         HttpHeaders headers = new HttpHeaders();

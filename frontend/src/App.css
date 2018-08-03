@@ -1,6 +1,3 @@
-@import "~material/react-button/index"; // the .scss extension is implied
-@import "./react-button-overrides";
-
 .App {
   text-align: center;
 }

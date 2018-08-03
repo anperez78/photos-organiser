@@ -21,14 +21,14 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
-@Import({ImportPhotosService.class, ImagesUtils.class})
-public class ImportPhotosServiceIntegrationTest {
+@Import({PhotoService.class, ImagesUtils.class})
+public class PhotoServiceIntegrationTest {
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    private ImportPhotosService importPhotosService;
+    private PhotoService photoService;
 
     @Test
     public void insertPhotosFromFolderTest() throws IOException {
@@ -38,7 +38,7 @@ public class ImportPhotosServiceIntegrationTest {
 
         File root = new File("/Users/antonio.perez/personal/photos-organiser/src/test/resources/assets/");
 
-        importPhotosService.insertPhotosFromFolder(root, new ArrayList<>(), new ImportPhotosResults());
+        photoService.insertPhotosFromFolder(root, new ArrayList<>(), new ImportPhotosResults());
 
         List finalSetOfPhotos = mongoTemplate.findAll(Photo.class);
         assertThat (finalSetOfPhotos.size(), is(4));
