@@ -5,3 +5,5 @@ target/
 frontend/build/
 frontend/node_modules/
 .DS_Store
+node_modules/
+photosOrganiser.iml
