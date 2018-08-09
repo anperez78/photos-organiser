@@ -29,6 +29,19 @@ class PhotoList extends Component {
             })
     };
 
+    getTaggedPhotos = () => {
+        console.log ('my searchString: ' + this.state.searchString);
+        fetch('/api/photo?tags=' + this.state.searchString)
+            .then(response => response.json())
+            .then(data => {
+                console.log('data: ', data)
+                this.setState({photos: data})
+            })
+            .catch((error) => {
+                console.log("Error occurred while fetching photos")
+                console.error(error)
+            })
+    };
 
     onSearchInputChange = (event) => {
         console.log("Search changed ..." + event.target.value)
@@ -37,8 +50,24 @@ class PhotoList extends Component {
         } else {
             this.setState({searchString: ''})
         }
-        this.getAllPhotos()
-    }
+    };
+
+    onSearchInputKeyDown = (event) => {
+        console.log("event.key ..." + event.key)
+        switch (event.key) {
+            case 'Enter':
+                if (this.state.searchString.length > 0) {
+                    console.log('getTaggedPhotos')
+                    this.getTaggedPhotos()
+                }
+                else {
+                    console.log('getAllPhotos')
+                    this.getAllPhotos()
+                }
+                break
+            default: break
+        }
+    };
 
     render() {
         return (
@@ -50,6 +79,7 @@ class PhotoList extends Component {
                                    placeholder="Search for Photos"
                                    margin="normal"
                                    onChange={this.onSearchInputChange}
+                                   onKeyDown={this.onSearchInputKeyDown}
                         />
                         <Grid container spacing={24} style={{padding: 24}}>
                             { this.state.photos.map(currentPhoto => (

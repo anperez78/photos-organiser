@@ -68,7 +68,15 @@ public class PhotoService {
 
         return photoRepository.findAll()
                 .stream()
-                .map(photo -> new PhotoDto(photosUrlBase + photo.getMd5HashHex()))
+                .map(photo -> new PhotoDto(photosUrlBase + photo.getMd5HashHex(), photo.getTags()))
+                .collect(Collectors.toList());
+    }
+
+    public List<PhotoDto> getQueryPhotoDtos(List<String> tags) {
+
+        return photoRepository.findByTagsIn(tags)
+                .stream()
+                .map(photo -> new PhotoDto(photosUrlBase + photo.getMd5HashHex(), photo.getTags()))
                 .collect(Collectors.toList());
     }
 
