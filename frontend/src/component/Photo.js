@@ -9,10 +9,8 @@ import { withStyles } from '@material-ui/core/styles';
 
 
 const styles = theme => ({
-    root: {
-        display: 'flex',
-        justifyContent: 'center',
-        flexWrap: 'wrap',
+    content: {
+        height: 35
     },
     chip: {
         margin: theme.spacing.unit,
@@ -23,8 +21,6 @@ const Photo = (props) => {
 
     const { classes } = props;
 
-    console.log ('classes: ', classes)
-
     return(
         <div>
             { props.photo ? (
@@ -33,19 +29,16 @@ const Photo = (props) => {
                                image={props.photo.photoUrl}
                                title={props.photo.photoUrl}
                     />
-                    <CardContent>
-                        <div className={classes.root}>
+                    <CardContent className={classes.content}>
                         { props.photo.tags.map(tag => (
                             <Chip label={tag} className={classes.chip} />
                         ))}
-                        </div>
-
                     </CardContent>
-                    <CardActions>
-                        <Button size="small" color="primary" href={props.photo.photoUrl} target="_blank">
-                            Go To photo
-                        </Button>
-                    </CardActions>
+                    {/*<CardActions>*/}
+                        {/*<Button size="small" color="primary" href={props.photo.photoUrl} target="_blank">*/}
+                            {/*Go To photo*/}
+                        {/*</Button>*/}
+                    {/*</CardActions>*/}
                 </Card>
             ) : null}
         </div>

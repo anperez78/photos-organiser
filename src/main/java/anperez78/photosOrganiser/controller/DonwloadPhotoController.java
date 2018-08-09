@@ -51,10 +51,12 @@ public class DonwloadPhotoController {
     @GetMapping("/api/photo")
     public List<PhotoDto> getQueryPhotos(@RequestParam("tags") String tagParams) {
 
-        List<String> tags =  Collections.list(new StringTokenizer(tagParams, "+")).stream()
+        log.info("tagParams: " + tagParams);
+        List<String> tags =  Collections.list(new StringTokenizer(tagParams, " ")).stream()
                 .map(token -> (String) token)
                 .collect(Collectors.toList());
 
+        log.info("tags: " + tags);
         return photoService.getQueryPhotoDtos(tags);
     }
 

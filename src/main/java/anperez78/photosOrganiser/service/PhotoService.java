@@ -74,7 +74,7 @@ public class PhotoService {
 
     public List<PhotoDto> getQueryPhotoDtos(List<String> tags) {
 
-        return photoRepository.findByTagsIn(tags)
+        return photoRepository.findByTags(tags)
                 .stream()
                 .map(photo -> new PhotoDto(photosUrlBase + photo.getMd5HashHex(), photo.getTags()))
                 .collect(Collectors.toList());

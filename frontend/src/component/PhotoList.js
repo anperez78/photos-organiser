@@ -29,9 +29,12 @@ class PhotoList extends Component {
             })
     };
 
-    getTaggedPhotos = () => {
-        console.log ('my searchString: ' + this.state.searchString);
-        fetch('/api/photo?tags=' + this.state.searchString)
+    getTaggedPhotos = (searchString) => {
+        console.log ('my searchString: ' + searchString);
+        const convertedSearchString = searchString.replace(/\s+/g, '+')
+        console.log ('my searchString converted: ' + convertedSearchString);
+
+        fetch('/api/photo?tags=' + convertedSearchString)
             .then(response => response.json())
             .then(data => {
                 console.log('data: ', data)
@@ -58,7 +61,7 @@ class PhotoList extends Component {
             case 'Enter':
                 if (this.state.searchString.length > 0) {
                     console.log('getTaggedPhotos')
-                    this.getTaggedPhotos()
+                    this.getTaggedPhotos(this.state.searchString)
                 }
                 else {
                     console.log('getAllPhotos')
