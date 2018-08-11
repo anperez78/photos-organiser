@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
-public class DonwloadPhotoController {
+public class PhotoController {
 
     @Autowired
     PhotoService photoService;
