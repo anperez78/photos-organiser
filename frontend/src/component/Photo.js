@@ -34,11 +34,11 @@ const Photo = (props) => {
                             <Chip label={tag} className={classes.chip} />
                         ))}
                     </CardContent>
-                    {/*<CardActions>*/}
-                        {/*<Button size="small" color="primary" href={props.photo.photoUrl} target="_blank">*/}
-                            {/*Go To photo*/}
-                        {/*</Button>*/}
-                    {/*</CardActions>*/}
+                    <CardActions>
+                        <Button size="small" color="primary" href={props.photo.photoUrl} target="_blank">
+                            Show
+                        </Button>
+                    </CardActions>
                 </Card>
             ) : null}
         </div>

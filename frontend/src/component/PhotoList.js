@@ -2,12 +2,17 @@ import React, { Component } from 'react'
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Photo from '../component/Photo'
+import Viewer from 'react-viewer';
+import 'react-viewer/dist/index.css';
+
+
 
 class PhotoList extends Component {
 
     state = {
         photos: [],
-        searchString: ''
+        searchString: '',
+
     }
 
     constructor() {
@@ -19,9 +24,8 @@ class PhotoList extends Component {
         fetch('/api/photo/all')
             .then(response => response.json())
             .then(data => {
-                this.setState({photos: data})
-                console.log(this.state.photos)
-
+                this.setState({photos: data});
+                this.props.callbackFromParent(data);
             })
             .catch((error) => {
                 console.log("Error occurred while fetching photos")
@@ -37,8 +41,8 @@ class PhotoList extends Component {
         fetch('/api/photo?tags=' + convertedSearchString)
             .then(response => response.json())
             .then(data => {
-                console.log('data: ', data)
                 this.setState({photos: data})
+                this.props.callbackFromParent(data);
             })
             .catch((error) => {
                 console.log("Error occurred while fetching photos")
@@ -60,11 +64,9 @@ class PhotoList extends Component {
         switch (event.key) {
             case 'Enter':
                 if (this.state.searchString.length > 0) {
-                    console.log('getTaggedPhotos')
                     this.getTaggedPhotos(this.state.searchString)
                 }
                 else {
-                    console.log('getAllPhotos')
                     this.getAllPhotos()
                 }
                 break
