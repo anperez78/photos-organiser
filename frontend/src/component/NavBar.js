@@ -44,7 +44,7 @@ class NavBar extends Component {
                 <AppBar position="static">
                     <Toolbar>
                         <Typography variant="title" color="inherit" className={classes.flex}>
-                            Fotos de Larisa y Antonio 1
+                            Fotos de Larisa y Antonio
                         </Typography>
                         <Button variant="contained" color="primary" className={classes.button} onClick={() => { this.setState({ visibleViewer: !this.state.visibleViewer }); } }>
                             Play
