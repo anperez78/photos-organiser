@@ -1,4 +1,4 @@
-# photos-organiser
+# media-organiser
 
 https://github.com/material-components/material-components-web
 https://github.com/material-components/material-components-web-react

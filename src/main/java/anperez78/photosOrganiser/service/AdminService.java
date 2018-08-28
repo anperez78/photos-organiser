@@ -1,9 +1,9 @@
 package anperez78.photosOrganiser.service;
 
-import anperez78.photosOrganiser.domain.ImportPhotosResults;
-import anperez78.photosOrganiser.domain.Photo;
+import anperez78.photosOrganiser.domain.ImportMediaResults;
+import anperez78.photosOrganiser.domain.Media;
 import anperez78.photosOrganiser.domain.VerifyPhotosResults;
-import anperez78.photosOrganiser.repository.PhotoRepository;
+import anperez78.photosOrganiser.repository.MediaRepository;
 import anperez78.photosOrganiser.util.ImagesUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,59 +19,66 @@ import java.util.List;
 @Slf4j
 public class AdminService {
 
-    @Value("${photos.url.base}")
+    @Value("${photo.url.base}")
     private String photosUrlBase;
+
+    @Value("#{'${media.import.exception}'.split(',')}")
+    private List<String> photosImportExceptions;
 
     @Autowired
     private ImagesUtils imagesUtils;
 
     @Autowired
-    private PhotoRepository photoRepository;
+    private MediaRepository mediaRepository;
 
-    public ImportPhotosResults insertPhotosFromFolder(final File folder, List<String> tags,  ImportPhotosResults importPhotosResults) throws IOException {
+    public ImportMediaResults insertPhotosFromFolder(final File folder, List<String> tags, ImportMediaResults importMediaResults) throws IOException {
 
         for (final File fileEntry : folder.listFiles()) {
+
             if (fileEntry.isDirectory()) {
+
                 String tag = fileEntry.getName();
+
+                if (isImportException(tag)) {
+                    continue;
+                }
+
                 List<String> tempTags = new ArrayList<>(tags);
                 tempTags.add(tag);
-                importPhotosResults = insertPhotosFromFolder(fileEntry, tempTags, importPhotosResults);
+                importMediaResults = insertPhotosFromFolder(fileEntry, tempTags, importMediaResults);
             }
             else {
-                String photoFilename = fileEntry.getName();
-                String photoFilepath = fileEntry.getParent();
+                String fileName = fileEntry.getName();
+                String filePath = fileEntry.getParent();
                 String md5HashHex = imagesUtils.getMd5HashFromFile(fileEntry.getAbsolutePath());
-                Photo photo = new Photo(md5HashHex, photoFilename, photoFilepath, tags);
+                Media media = new Media(md5HashHex, fileName, filePath, tags);
 
-                log.info(photo.toString());
+                log.info(media.toString());
 
-                if (photoRepository.existsById(photo.getMd5HashHex())) {
-                    log.warn("Photo " + photo.getMd5HashHex() + " already exists");
-                    importPhotosResults.addError(
-                            photo.getMd5HashHex(),
-                            "Photo already exists in the DB (" + photoFilepath + "/" + photoFilename + ")");
+                if (mediaRepository.existsById(media.getMd5HashHex())) {
+                    log.warn("Media " + media.getMd5HashHex() + " already exists");
+                    importMediaResults.addError(
+                            media.getMd5HashHex(),
+                            "Media already exists in the DB (" + filePath + "/" + fileName + ")");
                 }
                 else {
-                    photoRepository.save(photo);
-                    importPhotosResults.addSuccess(
-                            photo.getMd5HashHex(),
-                            "Photo added successfully (" + photoFilepath + "/" + photoFilename + ")");
+                    mediaRepository.save(media);
+                    importMediaResults.addSuccess();
                 }
             }
         }
 
-        return importPhotosResults;
+        return importMediaResults;
     }
 
     public VerifyPhotosResults verifyPhotosFromFolder(final File folder) throws IOException {
 
         VerifyPhotosResults verifyPhotosResults = new VerifyPhotosResults();
-        verifyPhotosResults.setNumberOfPhotosInDB(photoRepository.count());
+        verifyPhotosResults.setNumberOfPhotosInDB(mediaRepository.count());
 
         return checkPhotos(folder, verifyPhotosResults);
 
     }
-
 
     private VerifyPhotosResults checkPhotos(final File folder, VerifyPhotosResults verifyPhotosResults) throws IOException {
 
@@ -82,13 +89,17 @@ public class AdminService {
             else {
                 verifyPhotosResults.addExistingPhotoInFolder();
                 String md5HashHex = imagesUtils.getMd5HashFromFile(fileEntry.getAbsolutePath());
-                if (!photoRepository.existsById(md5HashHex)) {
+                if (!mediaRepository.existsById(md5HashHex)) {
                     verifyPhotosResults.addMissingPhotoInDB(md5HashHex);
                 }
             }
         }
 
         return verifyPhotosResults;
+    }
+
+    private Boolean isImportException (String folderName) {
+        return photosImportExceptions.contains(folderName);
     }
 
 }

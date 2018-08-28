@@ -21,14 +21,14 @@ class PhotoList extends Component {
     }
 
     getAllPhotos = () => {
-        fetch('/api/photo/all')
+        fetch('/api/media/all')
             .then(response => response.json())
             .then(data => {
                 this.setState({photos: data});
                 this.props.callbackFromParent(data);
             })
             .catch((error) => {
-                console.log("Error occurred while fetching photos")
+                console.log("Error occurred while fetching photos [/api/media/all]")
                 console.error(error)
             })
     };
@@ -45,7 +45,7 @@ class PhotoList extends Component {
                 this.props.callbackFromParent(data);
             })
             .catch((error) => {
-                console.log("Error occurred while fetching photos")
+                console.log("Error occurred while fetching photos [/api/photo?tags=xxx]")
                 console.error(error)
             })
     };

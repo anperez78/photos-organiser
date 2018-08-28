@@ -1,9 +1,9 @@
 package anperez78.photosOrganiser.controller;
 
-import anperez78.photosOrganiser.domain.Photo;
-import anperez78.photosOrganiser.dto.PhotoDto;
-import anperez78.photosOrganiser.repository.PhotoRepository;
-import anperez78.photosOrganiser.service.PhotoService;
+import anperez78.photosOrganiser.domain.Media;
+import anperez78.photosOrganiser.dto.MediaDto;
+import anperez78.photosOrganiser.repository.MediaRepository;
+import anperez78.photosOrganiser.service.MediaService;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
@@ -20,9 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,19 +41,19 @@ import java.util.stream.Collectors;
 public class PhotoController {
 
     @Autowired
-    PhotoService photoService;
+    MediaService mediaService;
 
     @Autowired
-    PhotoRepository photoRepository;
+    MediaRepository mediaRepository;
 
-    @GetMapping("/api/photo/all")
-    public List<PhotoDto> getAllPhotos() {
+    @GetMapping("/api/media/all")
+    public List<MediaDto> getAllMedia() {
 
-        return photoService.getAllPhotoDtos();
+        return mediaService.getAllMediaDtos();
     }
 
     @GetMapping("/api/photo")
-    public List<PhotoDto> getQueryPhotos(@RequestParam("tags") String tagParams) {
+    public List<MediaDto> getQueryPhotos(@RequestParam("tags") String tagParams) {
 
         log.info("tagParams: " + tagParams);
         List<String> tags =  Collections.list(new StringTokenizer(tagParams, " ")).stream()
@@ -57,7 +61,7 @@ public class PhotoController {
                 .collect(Collectors.toList());
 
         log.info("tags: " + tags);
-        return photoService.getQueryPhotoDtos(tags);
+        return mediaService.getQueryPhotoDtos(tags);
     }
 
     @RequestMapping("/api/photo/{md5}")
@@ -66,12 +70,12 @@ public class PhotoController {
 
         log.info("Requested picture >> " + md5 + " <<");
 
-        Optional<Photo> photo = photoRepository.findById(md5);
+        Optional<Media> photo = mediaRepository.findById(md5);
         if (!photo.isPresent()) {
             throw new Exception("Image not found");
         }
 
-        String photoFullPath = photo.get().getPhotoFilepath() + "/" + photo.get().getPhotoFilename();
+        String photoFullPath = photo.get().getFilePath() + "/" + photo.get().getFileName();
         Path path = Paths.get(photoFullPath);
         byte[] data = Files.readAllBytes(path);
 
@@ -80,6 +84,24 @@ public class PhotoController {
         headers.setContentLength(data.length);
 
         return new HttpEntity<>(data, headers);
+    }
+
+    @RequestMapping("/api/video/{md5}")
+    public StreamingResponseBody getVideoBinary(@PathVariable String md5) throws Exception {
+
+        log.info("Requested video >> " + md5 + " <<");
+
+        Optional<Media> photo = mediaRepository.findById(md5);
+        if (!photo.isPresent()) {
+            throw new Exception("Video not found");
+        }
+
+        String photoFullPath = photo.get().getFilePath() + "/" + photo.get().getFileName();
+
+        final InputStream videoFileStream = new FileInputStream(photoFullPath);
+        return (os) -> {
+            readAndWrite(videoFileStream, os);
+        };
     }
 
 
@@ -97,5 +119,15 @@ public class PhotoController {
         }
 
         return "";
+    }
+
+    private void readAndWrite(final InputStream is, OutputStream os)
+            throws IOException {
+        byte[] data = new byte[2048];
+        int read = 0;
+        while ((read = is.read(data)) > 0) {
+            os.write(data, 0, read);
+        }
+        os.flush();
     }
 }

@@ -73,7 +73,7 @@ class App extends Component {
 
         <div>
             <Card>
-                <CardMedia image="api/photo/EF9546DE14CFD2FE6D460912D23E0739" title="Contemplative Reptile"/>
+                <CardMedia image="api/media/EF9546DE14CFD2FE6D460912D23E0739" title="Contemplative Reptile"/>
                 <CardContent>
                     <Typography gutterBottom variant="headline" component="h2">
                         Lizard

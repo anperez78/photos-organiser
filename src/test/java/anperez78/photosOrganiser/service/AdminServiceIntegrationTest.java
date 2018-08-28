@@ -1,7 +1,7 @@
 package anperez78.photosOrganiser.service;
 
-import anperez78.photosOrganiser.domain.ImportPhotosResults;
-import anperez78.photosOrganiser.domain.Photo;
+import anperez78.photosOrganiser.domain.ImportMediaResults;
+import anperez78.photosOrganiser.domain.Media;
 import anperez78.photosOrganiser.domain.VerifyPhotosResults;
 import anperez78.photosOrganiser.util.ImagesUtils;
 import org.junit.After;
@@ -36,30 +36,30 @@ public class AdminServiceIntegrationTest {
     @After
     public void tearDown() throws InterruptedException {
 
-        mongoTemplate.dropCollection(Photo.class);
+        mongoTemplate.dropCollection(Media.class);
     }
 
     @Test
     public void insertPhotosFromFolderTest() throws IOException {
 
-        List initialSetOfPhotos = mongoTemplate.findAll(Photo.class);
+        List initialSetOfPhotos = mongoTemplate.findAll(Media.class);
         assertThat (initialSetOfPhotos.size(), is(0));
 
         File root = new File("/Users/antonio.perez/personal/photos-organiser/src/test/resources/assets/");
-        adminService.insertPhotosFromFolder(root, new ArrayList<>(), new ImportPhotosResults());
+        adminService.insertPhotosFromFolder(root, new ArrayList<>(), new ImportMediaResults());
 
-        List finalSetOfPhotos = mongoTemplate.findAll(Photo.class);
+        List finalSetOfPhotos = mongoTemplate.findAll(Media.class);
         assertThat (finalSetOfPhotos.size(), is(4));
     }
 
     @Test
     public void verifyPhotosFromFolder_returnsNoErrors_whenAllImagesInDB() throws IOException {
 
-        List initialSetOfPhotos = mongoTemplate.findAll(Photo.class);
+        List initialSetOfPhotos = mongoTemplate.findAll(Media.class);
         assertThat (initialSetOfPhotos.size(), is(0));
 
         File root = new File("/Users/antonio.perez/personal/photos-organiser/src/test/resources/assets/");
-        adminService.insertPhotosFromFolder(root, new ArrayList<>(), new ImportPhotosResults());
+        adminService.insertPhotosFromFolder(root, new ArrayList<>(), new ImportMediaResults());
 
         VerifyPhotosResults verifyPhotosResults = adminService.verifyPhotosFromFolder(root);
         assertThat (verifyPhotosResults.getMissingPhotosInDB().size(), is(0));
@@ -72,14 +72,14 @@ public class AdminServiceIntegrationTest {
     @Test
     public void verifyPhotosFromFolder_returnsErrors_whenMissingImagesInDB() throws IOException {
 
-        List initialSetOfPhotos = mongoTemplate.findAll(Photo.class);
+        List initialSetOfPhotos = mongoTemplate.findAll(Media.class);
         assertThat (initialSetOfPhotos.size(), is(0));
 
         File root = new File("/Users/antonio.perez/personal/photos-organiser/src/test/resources/assets/");
-        adminService.insertPhotosFromFolder(root, new ArrayList<>(), new ImportPhotosResults());
+        adminService.insertPhotosFromFolder(root, new ArrayList<>(), new ImportMediaResults());
 
-        Photo photoToBeDeleted = mongoTemplate.findById("EF9546DE14CFD2FE6D460912D23E0739", Photo.class);
-        mongoTemplate.remove(photoToBeDeleted);
+        Media mediaToBeDeleted = mongoTemplate.findById("EF9546DE14CFD2FE6D460912D23E0739", Media.class);
+        mongoTemplate.remove(mediaToBeDeleted);
 
         VerifyPhotosResults verifyPhotosResults = adminService.verifyPhotosFromFolder(root);
         assertThat (verifyPhotosResults.getMissingPhotosInDB().size(), is(1));

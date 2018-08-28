@@ -1,7 +1,7 @@
 package anperez78.photosOrganiser.service;
 
-import anperez78.photosOrganiser.domain.Photo;
-import anperez78.photosOrganiser.dto.PhotoDto;
+import anperez78.photosOrganiser.domain.Media;
+import anperez78.photosOrganiser.dto.MediaDto;
 import anperez78.photosOrganiser.util.ImagesUtils;
 import org.junit.After;
 import org.junit.Test;
@@ -20,41 +20,41 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
-@Import({PhotoService.class, ImagesUtils.class})
-public class PhotoServiceIntegrationTest {
+@Import({MediaService.class, ImagesUtils.class})
+public class MediaServiceIntegrationTest {
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    private PhotoService photoService;
+    private MediaService mediaService;
 
 
     @After
     public void tearDown() throws InterruptedException {
 
-        mongoTemplate.dropCollection(Photo.class);
+        mongoTemplate.dropCollection(Media.class);
     }
 
     @Test
     public void getQueryPhotoDtosTest() {
 
         List<String> photo01Tags = Arrays.asList("2015", "Spain", "Menorca");
-        Photo photo01 = new Photo("123", "photo01.jpg", "/home/test", photo01Tags);
+        Media media01 = new Media("123", "media01.jpg", "/home/test", photo01Tags);
 
         List<String> photo02Tags = Arrays.asList("2015", "Belarus", "Minsk");
-        Photo photo02 = new Photo("124", "photo02.jpg", "/home/test", photo02Tags);
+        Media media02 = new Media("124", "media02.jpg", "/home/test", photo02Tags);
 
-        mongoTemplate.insert(photo01);
-        mongoTemplate.insert(photo02);
+        mongoTemplate.insert(media01);
+        mongoTemplate.insert(media02);
 
         List<String> queryTags = Arrays.asList("2015");
-        List<PhotoDto> photoDtos = photoService.getQueryPhotoDtos(queryTags);
-        assertThat (photoDtos.size(), is(2));
+        List<MediaDto> mediaDtos = mediaService.getQueryPhotoDtos(queryTags);
+        assertThat (mediaDtos.size(), is(2));
 
         queryTags = Arrays.asList("2015", "Spain");
-        photoDtos = photoService.getQueryPhotoDtos(queryTags);
-        assertThat (photoDtos.size(), is(1));
+        mediaDtos = mediaService.getQueryPhotoDtos(queryTags);
+        assertThat (mediaDtos.size(), is(1));
 
     }
 }

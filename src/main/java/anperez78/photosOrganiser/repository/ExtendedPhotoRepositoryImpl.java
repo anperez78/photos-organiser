@@ -1,6 +1,6 @@
 package anperez78.photosOrganiser.repository;
 
-import anperez78.photosOrganiser.domain.Photo;
+import anperez78.photosOrganiser.domain.Media;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -22,14 +22,14 @@ public class ExtendedPhotoRepositoryImpl implements ExtendedPhotoRepository {
         this.operations = operations;
     }
 
-    public List<Photo> findByTags(List<String> tags) {
+    public List<Media> findByTags(List<String> tags) {
 
         log.info("findByTags: " + tags);
         Query searchQuery = new Query(Criteria.where("tags").all(tags));
-        List<Photo> photos = operations.find(searchQuery, Photo.class);
-        log.info("photos: " + photos.size());
+        List<Media> media = operations.find(searchQuery, Media.class);
+        log.info("media: " + media.size());
 
-        return photos;
+        return media;
     }
 
 }

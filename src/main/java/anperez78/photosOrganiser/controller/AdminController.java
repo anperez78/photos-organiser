@@ -1,9 +1,8 @@
 package anperez78.photosOrganiser.controller;
 
-import anperez78.photosOrganiser.domain.ImportPhotosResults;
+import anperez78.photosOrganiser.domain.ImportMediaResults;
 import anperez78.photosOrganiser.domain.VerifyPhotosResults;
 import anperez78.photosOrganiser.service.AdminService;
-import anperez78.photosOrganiser.service.PhotoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,15 +20,15 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    @Value("${photos.root.folder}")
+    @Value("${media.root.folder}")
     private String photosRootFolder;
 
     @GetMapping("/api/admin/import")
-    public ImportPhotosResults getImport() throws IOException {
+    public ImportMediaResults getImport() throws IOException {
 
         log.info ("photos root folder is " + photosRootFolder);
         final File folder = new File(photosRootFolder);
-        return adminService.insertPhotosFromFolder(folder, new ArrayList<>(), new ImportPhotosResults());
+        return adminService.insertPhotosFromFolder(folder, new ArrayList<>(), new ImportMediaResults());
     }
 
     @GetMapping("/api/admin/verify")
