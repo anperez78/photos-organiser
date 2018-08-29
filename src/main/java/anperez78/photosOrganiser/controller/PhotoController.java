@@ -68,7 +68,7 @@ public class PhotoController {
     @ResponseBody
     public HttpEntity<byte[]> getPhotoBinary(@PathVariable String md5) throws Exception {
 
-        log.info("Requested picture >> " + md5 + " <<");
+        log.info("Requesting photo >> " + md5 + " <<");
 
         Optional<Media> photo = mediaRepository.findById(md5);
         if (!photo.isPresent()) {
@@ -83,13 +83,15 @@ public class PhotoController {
         headers.setContentType(MediaType.IMAGE_JPEG);
         headers.setContentLength(data.length);
 
+        log.info("Requested photo >> " + md5 + " <<");
+
         return new HttpEntity<>(data, headers);
     }
 
     @RequestMapping("/api/video/{md5}")
     public StreamingResponseBody getVideoBinary(@PathVariable String md5) throws Exception {
 
-        log.info("Requested video >> " + md5 + " <<");
+        log.info("Requesting video >> " + md5 + " <<");
 
         Optional<Media> photo = mediaRepository.findById(md5);
         if (!photo.isPresent()) {
@@ -101,6 +103,7 @@ public class PhotoController {
         final InputStream videoFileStream = new FileInputStream(photoFullPath);
         return (os) -> {
             readAndWrite(videoFileStream, os);
+            log.info("Requested video >> " + md5 + " <<");
         };
     }
 
@@ -121,8 +124,8 @@ public class PhotoController {
         return "";
     }
 
-    private void readAndWrite(final InputStream is, OutputStream os)
-            throws IOException {
+    private void readAndWrite(final InputStream is, OutputStream os) throws IOException {
+
         byte[] data = new byte[2048];
         int read = 0;
         while ((read = is.read(data)) > 0) {

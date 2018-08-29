@@ -38,7 +38,6 @@ public class AdminService {
             if (fileEntry.isDirectory()) {
 
                 String tag = fileEntry.getName();
-
                 if (isImportException(tag)) {
                     continue;
                 }
@@ -49,6 +48,10 @@ public class AdminService {
             }
             else {
                 String fileName = fileEntry.getName();
+                if (isImportException(fileName)) {
+                    continue;
+                }
+
                 String filePath = fileEntry.getParent();
                 String md5HashHex = imagesUtils.getMd5HashFromFile(fileEntry.getAbsolutePath());
                 Media media = new Media(md5HashHex, fileName, filePath, tags);

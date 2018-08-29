@@ -86,7 +86,7 @@ class PhotoList extends Component {
                                    onChange={this.onSearchInputChange}
                                    onKeyDown={this.onSearchInputKeyDown}
                         />
-                        <Grid container spacing={24} style={{padding: 24}}>
+                        <Grid container spacing={8} style={{padding: 24}}>
                             { this.state.photos.map(currentPhoto => (
                                 <Grid item xs={12} sm={6} lg={4} xl={3}>
                                     <Photo photo={currentPhoto} />

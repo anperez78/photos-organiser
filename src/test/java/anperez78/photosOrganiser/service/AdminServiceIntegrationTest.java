@@ -32,7 +32,6 @@ public class AdminServiceIntegrationTest {
     @Autowired
     private AdminService adminService;
 
-
     @After
     public void tearDown() throws InterruptedException {
 

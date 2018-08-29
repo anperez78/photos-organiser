@@ -25,7 +25,6 @@ class NavBar extends Component {
 
     state = {
         visibleViewer: false,
-
     }
 
     constructor() {
