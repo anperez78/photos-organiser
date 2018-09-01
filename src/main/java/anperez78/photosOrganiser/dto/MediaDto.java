@@ -7,37 +7,26 @@ import java.util.List;
 
 public class MediaDto {
 
-    private String mediaUrl;
+    private String mediaId;
     private MediaType mediaType;
     private List<String> tags;
 
-    public MediaDto(String mediaUrl, MediaType mediaType, List<String> tags) {
-        this.mediaUrl = mediaUrl;
+    public MediaDto(String mediaId, MediaType mediaType, List<String> tags) {
+        this.mediaId = mediaId;
         this.mediaType = mediaType;
         this.tags = tags;
     }
 
-    public String getMediaUrl() {
-        return mediaUrl;
-    }
-
-    public void setMediaUrl(String mediaUrl) {
-        this.mediaUrl = mediaUrl;
+    public String getMediaId() {
+        return mediaId;
     }
 
     public MediaType getMediaType() {
         return mediaType;
     }
 
-    public void setMediaType(MediaType mediaType) {
-        this.mediaType = mediaType;
-    }
-
     public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
 }

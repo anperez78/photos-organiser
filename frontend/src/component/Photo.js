@@ -10,9 +10,14 @@ import ReactPlayer from 'react-player';
 import PropTypes from 'prop-types';
 import Modal from '@material-ui/core/Modal';
 import Image from 'material-ui-image'
+import Typography from '@material-ui/core/Typography';
+
 
 function getModalStyle() {
     return {
+        display: 'flex',
+        alignItems: 'center',
+
         position: 'absolute',
         top: '50%',
         left: '50%',
@@ -29,7 +34,7 @@ const styles = theme => ({
     },
     paper: {
         position: 'absolute',
-        width: theme.spacing.unit * 50,
+        width: theme.spacing.unit * 100,
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         padding: theme.spacing.unit * 4,
@@ -41,9 +46,15 @@ class Photo extends Component {
 
     state = {
         open: false,
+        exif: null,
     };
 
-    handleOpen = () => {
+    constructor() {
+        super();
+    };
+
+    handleOpen = (photoExifUrl) => {
+        this.getPhotoExifInfo(photoExifUrl)
         this.setState({ open: true });
     };
 
@@ -51,40 +62,62 @@ class Photo extends Component {
         this.setState({ open: false });
     };
 
-    constructor() {
-        super()
-    }
+    getPhotoExifInfo = (photoUrl) => {
+        fetch(photoUrl)
+            .then(response => response.json())
+            .then(data => {
+                this.setState({exif: data});
+            })
+            .catch((error) => {
+                console.log("Error occurred while fetching photo exif [/api/photo/md5/exif]")
+                console.error(error)
+            })
+    };
 
     render() {
 
         const {classes} = this.props;
+        const mediaId = this.props.photo.mediaId;
+        const photoExifUrl = '/api/photo/' + mediaId + '/exif';
+        const photoUrl = '/api/photo/' + mediaId;
+
         let mediaCard;
 
         if (this.props.photo.mediaType == 'VIDEO') {
 
+            const videoUrl = '/api/video/' + mediaId;
+
             mediaCard = <CardMedia>
-                            <ReactPlayer url={this.props.photo.mediaUrl}
+                            <ReactPlayer url={videoUrl}
                                          controls="true"
                                          height="50%" width="50%"
                                          style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}}/>
                         </CardMedia>;
         } else {
+
             mediaCard = <CardMedia style={{height: 0, paddingTop: '56.25%'}}
-                                   image={this.props.photo.mediaUrl} />;
+                                   image={photoUrl} />;
         }
 
         return (
             <div>
+
                 <Modal
-                    aria-labelledby="simple-modal-title"
-                    aria-describedby="simple-modal-description"
                     open={this.state.open}
                     onClose={this.handleClose}
                 >
                     <div style={getModalStyle()} className={classes.paper}>
-                        <Image
-                            src={this.props.photo.mediaUrl}
+
+                        <Image style={{ width: '250px', height: '200px' }}
+                               src={photoUrl}
                         />
+                        <div align="left">
+                            { this.state.exif ? (this.state.exif.map(item => (
+                                    <Typography variant="caption">[{item.tagDirectoryName}]{item.tagName}: {item.tagDescription}</Typography>
+                                ))
+                            ) : null}
+                        </div>
+
                     </div>
                 </Modal>
 
@@ -98,7 +131,7 @@ class Photo extends Component {
                             ))}
                         </CardContent>
                         <CardActions>
-                            <Button size="small" color="primary" onClick={this.handleOpen}>
+                            <Button size="small" color="primary"  onClick={() => this.handleOpen(photoExifUrl)}>
                                 Show
                             </Button>
                         </CardActions>

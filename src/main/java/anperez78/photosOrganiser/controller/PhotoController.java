@@ -1,6 +1,7 @@
 package anperez78.photosOrganiser.controller;
 
 import anperez78.photosOrganiser.domain.Media;
+import anperez78.photosOrganiser.dto.ExifDto;
 import anperez78.photosOrganiser.dto.MediaDto;
 import anperez78.photosOrganiser.repository.MediaRepository;
 import anperez78.photosOrganiser.service.MediaService;
@@ -30,6 +31,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +74,7 @@ public class PhotoController {
 
         Optional<Media> photo = mediaRepository.findById(md5);
         if (!photo.isPresent()) {
-            throw new Exception("Image not found");
+            throw new Exception("Image not found: " + md5);
         }
 
         String photoFullPath = photo.get().getFilePath() + "/" + photo.get().getFileName();
@@ -95,7 +97,7 @@ public class PhotoController {
 
         Optional<Media> photo = mediaRepository.findById(md5);
         if (!photo.isPresent()) {
-            throw new Exception("Video not found");
+            throw new Exception("Video not found: " + md5);
         }
 
         String photoFullPath = photo.get().getFilePath() + "/" + photo.get().getFileName();
@@ -108,20 +110,30 @@ public class PhotoController {
     }
 
 
-    @GetMapping("/api/exif")
-    public String getExifInfo() throws IOException, ImageProcessingException {
+    @GetMapping("/api/photo/{md5}/exif")
+    public List<ExifDto> getPhotoExifInfo(@PathVariable String md5) throws Exception {
 
-        File file = new File("/Users/antonio.perez/personal/photos-organiser/frontend/public/images/2018-07-01 11.32.58.jpg");
+        log.info("Requesting EXIF photo >> " + md5 + " <<");
+
+        Optional<Media> photo = mediaRepository.findById(md5);
+        if (!photo.isPresent()) {
+            throw new Exception("Image not found: " + md5);
+        }
+
+        String photoFullPath = photo.get().getFilePath() + "/" + photo.get().getFileName();
+        File file = new File(photoFullPath);
 
         Metadata metadata = ImageMetadataReader.readMetadata(file);
 
+        List<ExifDto> exifDtos = new ArrayList<>();
         for (Directory directory : metadata.getDirectories()) {
             for (Tag tag : directory.getTags()) {
-                System.out.println(tag);
+                exifDtos.add(new ExifDto(tag.getTagName(), tag.getDirectoryName(), tag.getDescription()));
+                System.out.println("Tag name: " + tag.getTagName() + ", Description: " + tag.getDescription() + ", tag directory name: " + tag.getDirectoryName());
             }
         }
 
-        return "";
+        return exifDtos;
     }
 
     private void readAndWrite(final InputStream is, OutputStream os) throws IOException {

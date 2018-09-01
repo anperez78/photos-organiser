@@ -19,9 +19,6 @@ import java.util.List;
 @Slf4j
 public class AdminService {
 
-    @Value("${photo.url.base}")
-    private String photosUrlBase;
-
     @Value("#{'${media.import.exception}'.split(',')}")
     private List<String> photosImportExceptions;
 
