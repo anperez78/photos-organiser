@@ -1,27 +1,22 @@
 package anperez78.photosOrganiser.dto;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ExifDto {
 
-    private String tagName;
-    private String tagDirectoryName;
-    private String tagDescription;
+    private List<ExifDirectoryDto> exifDirectoryDtoList;
 
-    public ExifDto(String tagName, String tagDirectoryName, String tagDescription) {
-        this.tagName = tagName;
-        this.tagDirectoryName = tagDirectoryName;
-        this.tagDescription = tagDescription;
+    public ExifDto() {
+        this.exifDirectoryDtoList = new ArrayList<>();
     }
 
-    public String getTagName() {
-        return tagName;
+    public void addExifDirectory(ExifDirectoryDto exifDirectoryDto) {
+        this.exifDirectoryDtoList.add(exifDirectoryDto);
     }
 
-    public String getTagDirectoryName() {
-        return tagDirectoryName;
-    }
-
-    public String getTagDescription() {
-        return tagDescription;
+    public List<ExifDirectoryDto> getExifDirectoryDtoList() {
+        return exifDirectoryDtoList;
     }
 }

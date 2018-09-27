@@ -1,12 +1,13 @@
 package anperez78.photosOrganiser.controller;
 
 import anperez78.photosOrganiser.domain.Media;
+import anperez78.photosOrganiser.dto.ExifDirectoryDto;
 import anperez78.photosOrganiser.dto.ExifDto;
+import anperez78.photosOrganiser.dto.ExifItemDto;
 import anperez78.photosOrganiser.dto.MediaDto;
 import anperez78.photosOrganiser.repository.MediaRepository;
 import anperez78.photosOrganiser.service.MediaService;
 import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
@@ -85,8 +86,6 @@ public class PhotoController {
         headers.setContentType(MediaType.IMAGE_JPEG);
         headers.setContentLength(data.length);
 
-        log.info("Requested photo >> " + md5 + " <<");
-
         return new HttpEntity<>(data, headers);
     }
 
@@ -105,13 +104,12 @@ public class PhotoController {
         final InputStream videoFileStream = new FileInputStream(photoFullPath);
         return (os) -> {
             readAndWrite(videoFileStream, os);
-            log.info("Requested video >> " + md5 + " <<");
         };
     }
 
 
     @GetMapping("/api/photo/{md5}/exif")
-    public List<ExifDto> getPhotoExifInfo(@PathVariable String md5) throws Exception {
+    public ExifDto getPhotoExifInfo(@PathVariable String md5) throws Exception {
 
         log.info("Requesting EXIF photo >> " + md5 + " <<");
 
@@ -125,15 +123,16 @@ public class PhotoController {
 
         Metadata metadata = ImageMetadataReader.readMetadata(file);
 
-        List<ExifDto> exifDtos = new ArrayList<>();
+        ExifDto exifDto = new ExifDto();
         for (Directory directory : metadata.getDirectories()) {
+            ExifDirectoryDto exifDirectoryDto = new ExifDirectoryDto(directory.getName());
             for (Tag tag : directory.getTags()) {
-                exifDtos.add(new ExifDto(tag.getTagName(), tag.getDirectoryName(), tag.getDescription()));
-                System.out.println("Tag name: " + tag.getTagName() + ", Description: " + tag.getDescription() + ", tag directory name: " + tag.getDirectoryName());
+                exifDirectoryDto.addExifItem(new ExifItemDto(tag.getTagName(), tag.getDescription()));
             }
+            exifDto.addExifDirectory(exifDirectoryDto);
         }
 
-        return exifDtos;
+        return exifDto;
     }
 
     private void readAndWrite(final InputStream is, OutputStream os) throws IOException {

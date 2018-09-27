@@ -9,19 +9,19 @@ import { withStyles } from '@material-ui/core/styles';
 import ReactPlayer from 'react-player';
 import PropTypes from 'prop-types';
 import Modal from '@material-ui/core/Modal';
-import Image from 'material-ui-image'
-import Typography from '@material-ui/core/Typography';
+import ExifPanel from './ExifPanel'
 
 
 function getModalStyle() {
     return {
+        width: '75%',
         display: 'flex',
         alignItems: 'center',
-
         position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
+        backgroundColor: 'white'
     };
 }
 
@@ -106,16 +106,12 @@ class Photo extends Component {
                     open={this.state.open}
                     onClose={this.handleClose}
                 >
-                    <div style={getModalStyle()} className={classes.paper}>
+                    <div style={getModalStyle()}>
 
-                        <Image style={{ width: '250px', height: '200px' }}
-                               src={photoUrl}
-                        />
-                        <div align="left">
-                            { this.state.exif ? (this.state.exif.map(item => (
-                                    <Typography variant="caption">[{item.tagDirectoryName}]{item.tagName}: {item.tagDescription}</Typography>
-                                ))
-                            ) : null}
+                        <img style={{ width: '75%', height: 'auto', paddingTop: '40px', paddingRight: '20px', paddingBottom: '40px', paddingLeft: '20px'}} src={photoUrl}/>
+
+                        <div align="left" style={{ paddingRight: '20px'}}>
+                            <ExifPanel exifData={this.state.exif}/>
                         </div>
 
                     </div>
