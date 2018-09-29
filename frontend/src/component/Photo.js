@@ -56,11 +56,11 @@ class Photo extends Component {
     handleOpen = (photoExifUrl) => {
         this.getPhotoExifInfo(photoExifUrl)
         this.setState({ open: true });
-    };
+    }
 
     handleClose = () => {
         this.setState({ open: false });
-    };
+    }
 
     getPhotoExifInfo = (photoUrl) => {
         fetch(photoUrl)
@@ -74,8 +74,14 @@ class Photo extends Component {
             })
     };
 
-    render() {
+    componentDidMount() {
+        this.props.onRef(this);
+    }
+    componentWillUnmount() {
+        this.props.onRef(undefined);
+    }
 
+    render() {
         const {classes} = this.props;
         const mediaId = this.props.photo.mediaId;
         const photoExifUrl = '/api/photo/' + mediaId + '/exif';

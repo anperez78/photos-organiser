@@ -4,8 +4,6 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Viewer from 'react-viewer';
 
 
 const styles = theme => ({
@@ -14,18 +12,12 @@ const styles = theme => ({
     },
     flex: {
         flexGrow: 1,
-    },
-    button: {
-        margin: theme.spacing.unit,
-    },
+    }
 });
 
 
 class NavBar extends Component {
 
-    state = {
-        visibleViewer: false,
-    }
 
     constructor() {
         super()
@@ -34,10 +26,6 @@ class NavBar extends Component {
     render() {
         const {classes} = this.props;
 
-        const photosForViewer = this.props.photos.map(photo => { return { src: photo.photoUrl, alt: photo.photoUrl} });
-
-        console.log ('photosForViewer in NavBar: ', photosForViewer)
-
         return(
             <div className={classes.root}>
                 <AppBar position="static">
@@ -45,14 +33,6 @@ class NavBar extends Component {
                         <Typography variant="title" color="inherit" className={classes.flex}>
                             Fotos de Larisa y Antonio
                         </Typography>
-                        <Button variant="contained" color="primary" className={classes.button} onClick={() => { this.setState({ visibleViewer: !this.state.visibleViewer }); } }>
-                            Play
-                        </Button>
-                        <Viewer
-                            visible={this.state.visibleViewer}
-                            onClose={() => { this.setState({ visibleViewer: false }); } }
-                            images={photosForViewer}
-                        />
                     </Toolbar>
                 </AppBar>
             </div>

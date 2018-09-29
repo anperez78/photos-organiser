@@ -19,7 +19,7 @@ class App extends Component {
     render() {
         return (
             <div>
-                <NavBar photos={this.state.photos} />
+                <NavBar />
                 <PhotoList callbackFromParent={this.photosFromPhotoList}/>
             </div>
         )
